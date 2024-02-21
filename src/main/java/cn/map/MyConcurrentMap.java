@@ -141,7 +141,7 @@ public class MyConcurrentMap<K extends Comparable<K>,V> {
                         if(currentNode.key == k || k.equals(currentNode.key)){
 
                             currentNode.value = v;
-                            break other;
+                            return;
 
                         }
 
@@ -398,7 +398,7 @@ public class MyConcurrentMap<K extends Comparable<K>,V> {
                      *   如果他两相等表示，没有线程在扩容完成，否则正在扩容
                      *
                      * */
-                    if ((sc - 2) != resizeStamp(n) << 16)
+                    if ((sc - 2) != (resizeStamp(n) << 16))
                         return;
 
                     tab = nextTab;
@@ -431,48 +431,6 @@ public class MyConcurrentMap<K extends Comparable<K>,V> {
 
         }
 
-    }
-
-    public static void main(String[] args) {
-        // 创建一个 ConcurrentHashMap
-        MyConcurrentMap<String, Integer> map = new MyConcurrentMap<>();
-
-        // 创建并启动多个线程，向 ConcurrentHashMap 中添加元素
-        for (int i = 0; i < 10; i++) {
-            String key = "Key-" + i;
-            Thread thread = new Thread(new Worker(map, key));
-            thread.start();
-        }
-
-        // 等待所有线程执行完毕
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // 输出 ConcurrentHashMap 中的元素
-        System.out.println("ConcurrentHashMap 中的元素：");
-    }
-
-    // Worker 线程用于向 ConcurrentHashMap 中添加元素
-    static class Worker implements Runnable {
-        private MyConcurrentMap<String, Integer> map;
-        private String key;
-
-        public Worker(MyConcurrentMap<String, Integer> map, String key) {
-            this.map = map;
-            this.key = key;
-        }
-
-        @Override
-        public void run() {
-            // 模拟向 ConcurrentHashMap 中添加元素
-            for (int i = 0; i < 1000; i++) {
-                map.putVal(key, i);
-            }
-            System.out.println(Thread.currentThread().getName() + " 完成了对 ConcurrentHashMap 的操作。");
-        }
     }
 
     /**

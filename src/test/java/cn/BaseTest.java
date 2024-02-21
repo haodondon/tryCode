@@ -1,9 +1,12 @@
 package cn;
 
 import cn.list.MyArrayList;
+import cn.map.MyConcurrentMap;
 import cn.map.MyHashMap;
 import cn.tree.BinarySearchTree;
 import cn.tree.RedBlackTree;
+import javafx.concurrent.Worker;
+
 import java.util.Scanner;
 
 /**
@@ -16,7 +19,38 @@ public class BaseTest {
 
     public static void main(String[] args) {
 
+        myConcurrentMap();
 
+    }
+
+    /**
+     * 线程安全集合测试
+     */
+    public static void myConcurrentMap(){
+
+        // 创建一个 ConcurrentHashMap
+        MyConcurrentMap<String, Integer> map = new MyConcurrentMap<>();
+
+        // 创建并启动多个线程，向 ConcurrentHashMap 中添加元素
+        for (int i = 0; i < 20; i++) {
+            String key = "Key-" + i;
+            Thread thread = new Thread(()->{
+                // 模拟向 ConcurrentHashMap 中添加元素
+                for (int j = 0; j < 1000; j++) {
+                    map.putVal(key, j);
+                }
+                System.out.println(Thread.currentThread().getName() + " 完成了对 ConcurrentHashMap 的操作：" + map.get(key));
+
+            });
+            thread.start();
+        }
+
+        // 等待所有线程执行完毕
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
